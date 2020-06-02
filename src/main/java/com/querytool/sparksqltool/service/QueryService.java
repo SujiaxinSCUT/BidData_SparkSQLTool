@@ -6,18 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class QueryService {
-
-	private Connection connection;
 	
-	PreparedStatement ps = null;
+	static PreparedStatement ps = null;
 	
-	public QueryService(Connection conn) {
-		this.connection = conn;
-	}
-	
-	public ResultSet executeQuery(String sql) throws SQLException {
+	public static ResultSet executeQuery(String sql,Connection connection) throws SQLException {
 		ps = connection.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
 		return rs;
 	}
+	
+	public static void selectDatabase(String database,Connection connection) throws SQLException {
+		ps = connection.prepareStatement("use "+database);
+		ps.execute();
+	}
+	
 }

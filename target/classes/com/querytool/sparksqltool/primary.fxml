@@ -1,16 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.*?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.querytool.sparksqltool.PrimaryController">
+<VBox fx:id="container" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" spacing="10.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.querytool.sparksqltool.controller.PrimaryController">
    <children>
-      <Label text="Primary View" />
-      <Button fx:id="primaryButton" text="Switch to Secondary View" onAction="#switchToSecondary"/>
+      <VBox alignment="CENTER">
+         <children>
+            <ImageView fx:id="logo" fitHeight="50.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
+            <Label text="基于SparkSQL" textFill="SILVER">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets bottom="20.0" />
+         </VBox.margin>
+      </VBox>
+      <HBox alignment="BOTTOM_CENTER" prefHeight="40.0" prefWidth="200.0" spacing="5.0">
+         <children>
+            <VBox prefWidth="230.0">
+               <children>
+                  <Label style="-fx-text-fill: #218ced;" text="Username" />
+                  <JFXTextField fx:id="accessKey_field" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="BOTTOM_CENTER" prefHeight="40.0" prefWidth="200.0" spacing="5.0">
+         <children>
+            <VBox prefWidth="230.0">
+               <children>
+                  <Label style="-fx-text-fill: #218ced;" text="Password" />
+                  <JFXPasswordField fx:id="secretKey_field" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="BOTTOM_CENTER" prefHeight="40.0" prefWidth="200.0" spacing="5.0">
+         <children>
+            <VBox prefWidth="230.0">
+               <children>
+                  <Label style="-fx-text-fill: #218ced;" text="ServiceEndPoint" />
+                  <JFXTextField fx:id="serviceEndpoint_field" />
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </HBox>
+      <JFXButton fx:id="connect_btn" onAction="#connect" prefHeight="40.0" prefWidth="230.0" style="-fx-background-color: #218ced;" text="连      接" textFill="WHITE">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <font>
+            <Font size="16.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
    </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
 </VBox>

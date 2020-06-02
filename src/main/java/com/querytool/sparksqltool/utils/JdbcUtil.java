@@ -12,19 +12,14 @@ public class JdbcUtil {
 	
 	private static Map<String,Connection> map = new HashMap<>();
 	
-	public static String connect(String url,String username,String password) throws SQLException {
+	public static Connection connect(String url,String username,String password) throws SQLException {
 		try {
             Class.forName(DRIVER_NAME);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            System.exit(1);
         }
-		Connection connection = DriverManager.getConnection(url,username,password);
-		int index_pre = url.indexOf("//");
-		int index_post = url.lastIndexOf(":");
-		String name = url.substring(index_pre+2,index_post);
-		map.put(name, connection);
-		return name;
+		Connection connection = DriverManager.getConnection("jdbc:hive2://"+url,username,password);
+		return connection;
 	}
 	
 }

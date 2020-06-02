@@ -8,18 +8,49 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import com.querytool.sparksqltool.controller.SecondaryController;
+
 /**
  * JavaFX App
  */
 public class App extends Application {
 
     private static Scene scene;
+    
+    private static Stage stage;
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"));
-        stage.setScene(scene);
-        stage.show();
+    	AppContext.instance().setApp(this);
+        loginStage();
+    }
+    
+    public void loginStage() throws IOException {
+    	Stage stage = new Stage();
+    	this.stage =stage;
+    	stage.setResizable(false);
+    	Scene scene = new Scene(loadFXML("primary"));
+    	stage.setWidth(360);
+    	stage.setHeight(400);
+    	stage.setScene(scene);
+    	stage.show();
+    }
+    
+    public SecondaryController mainStage() throws IOException {
+    	Stage stage = new Stage();
+    	this.stage =stage;
+    	stage.setResizable(false);
+    	FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("secondary.fxml"));
+    	Scene scene = new Scene(fxmlLoader.load());
+    	stage.setScene(scene);
+    	stage.setWidth(800);
+    	stage.setHeight(600);
+    	stage.show();
+    	return fxmlLoader.getController();
+    }
+    
+    public void close() {
+    	stage.close();
     }
 
     static void setRoot(String fxml) throws IOException {

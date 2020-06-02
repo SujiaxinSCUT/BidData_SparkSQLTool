@@ -11,6 +11,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.querytool.sparksqltool.AppContext;
+import com.querytool.sparksqltool.service.LoadSqlService;
+import com.querytool.sparksqltool.service.QueryService;
 import com.querytool.sparksqltool.utils.JdbcUtil;
 
 public class Test {
@@ -18,26 +21,27 @@ public class Test {
 	private static final String DRIVER_NAME = "org.apache.hive.jdbc.HiveDriver";
 	
 	public static void main(String[] args) throws SQLException {
-//		try {
-//            Class.forName(DRIVER_NAME);
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-//		Connection connection = DriverManager.getConnection("jdbc:hive2://bigdata31.depts.bingosoft.net:22231"
-//				, "user10", "pass@bingo10");
-//		String sql = "select table_name from user10_db";
-//		Statement stmt = connection.createStatement();
-//		ResultSet rs = stmt.executeQuery(sql);
+		try {
+            Class.forName(DRIVER_NAME);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+		Connection connection = DriverManager.getConnection("jdbc:hive2://bigdata31.depts.bingosoft.net:22231"
+				, "user10", "pass@bingo10");
+		String sql = "show tables";
+		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		ResultSetMetaData rMetaData = rs.getMetaData();
 //		List<String> list = new ArrayList<String>();
-//		while(rs.next()){
-//			System.out.println(rs.getString("TABLE_NAME"));
-//			String tblName = rs.getString("TABLE_NAME");
-//			list.add(tblName);
-//		}
+		int count = rMetaData.getColumnCount();
+		while(rs.next()){
+			for(int i=1;i<=count;i++) {
+				System.out.print(rs.getString(i)+" ");
+			}
+			System.out.println();
+		}
 //		System.out.println(list);
-		System.out.println(JdbcUtil.connect("jdbc:hive2://bigdata31.depts.bingosoft.net:22231",
-				"user10", "pass@bingo10"));
-
+//		DatabaseMetaData metaData = connection.getMetaData();
+		
 	}
 }
