@@ -2,6 +2,7 @@ package com.querytool.sparksqltool;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,11 @@ public class AppContext {
 	
 	public App getApp() {
 		return this.app;
+	}
+	
+	public List<String> getConnsName(){
+		List<String> list = new ArrayList<>(conns.keySet());
+		return list;
 	}
 	
 	public String connect(String url,String username,String password) throws SQLException {

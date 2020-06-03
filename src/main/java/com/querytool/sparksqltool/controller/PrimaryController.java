@@ -145,10 +145,9 @@ class ConnectionTask extends Task<List<String>>{
 				public void run() {
 					// TODO Auto-generated method stub
 	        		try {
-	        			String name = AppContext.instance().connect(url, username, password);
+	        			AppContext.instance().connect(url, username, password);
 	        			AppContext.instance().getApp().close();
-	        			SecondaryController controller = AppContext.instance().getApp().mainStage();
-	        			controller.addTreeViewRoot(name);
+	        			AppContext.instance().getApp().mainStage();
 	        		} catch (Exception e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();

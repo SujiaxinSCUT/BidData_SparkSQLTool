@@ -9,7 +9,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 
-<SplitPane dividerPositions="0.2907268170426065" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="com.querytool.sparksqltool.controller.SecondaryController">
+<SplitPane dividerPositions="0.2907268170426065" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.querytool.sparksqltool.controller.SecondaryController">
   <items>
       <ScrollPane style="-fx-background-color: white;">
          <content>
@@ -29,15 +29,11 @@
                   <TabPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                       <Tab text="日志">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                        </content>
+                           <content>
+                              <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" />
+                           </content>
                       </Tab>
-                      <Tab text="结果集">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                        </content>
-                      </Tab>
+                      <Tab fx:id="resultSet" text="结果集" />
                     </tabs>
                   </TabPane>
               </items>
