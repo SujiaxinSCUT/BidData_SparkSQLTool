@@ -11,8 +11,14 @@ public class QueryService {
 	
 	public static ResultSet executeQuery(String sql,Connection connection) throws SQLException {
 		ps = connection.prepareStatement(sql);
-		ResultSet rs = ps.executeQuery();
+		ResultSet rs = null;
+		rs = ps.executeQuery();
 		return rs;
+	}
+	
+	public static void execute(String sql,Connection connection) throws SQLException {
+		ps = connection.prepareStatement(sql);
+		ps.execute();
 	}
 	
 	public static void selectDatabase(String database,Connection connection) throws SQLException {

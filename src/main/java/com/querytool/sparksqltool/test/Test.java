@@ -26,22 +26,15 @@ public class Test {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-		Connection connection = DriverManager.getConnection("jdbc:hive2://bigdata31.depts.bingosoft.net:22231"
+		Connection connection = DriverManager.getConnection("jdbc:hive2://bigdata31.depts.bingosoft.net:22231/user10_db"
 				, "user10", "pass@bingo10");
-		String sql = "show tables";
+		String sql = "select * from t_rk_jbxx_result limit 5";
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
-		ResultSetMetaData rMetaData = rs.getMetaData();
-//		List<String> list = new ArrayList<String>();
-		int count = rMetaData.getColumnCount();
-		while(rs.next()){
-			for(int i=1;i<=count;i++) {
-				System.out.print(rs.getString(i)+" ");
-			}
-			System.out.println();
+		List<List<String>> data = LoadSqlService.loadTables(rs);
+		for(List<String> list:data) {
+			System.out.println(list);
 		}
-//		System.out.println(list);
-//		DatabaseMetaData metaData = connection.getMetaData();
 		
 	}
 }

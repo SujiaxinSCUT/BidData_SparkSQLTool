@@ -1,32 +1,39 @@
 package com.querytool.sparksqltool.controller;
 
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.querytool.sparksqltool.App;
 import com.querytool.sparksqltool.AppContext;
+import com.querytool.sparksqltool.service.LoadSqlService;
+import com.querytool.sparksqltool.service.QueryService;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Tab;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class SecondaryController  implements Initializable{
@@ -35,22 +42,75 @@ public class SecondaryController  implements Initializable{
 	private VBox viewContainer;
 	
 	@FXML
-	private Tab resultSet;
+	private ScrollPane resultSet;
 	
+	@FXML
+	private TextArea inputArea;
+	
+	@FXML
+	private JFXButton runButton;
+	
+	@FXML
+	private JFXButton stopButton;
+	
+	@FXML
+	private JFXComboBox<String> conBox;
+	
+	@FXML
+	private JFXComboBox<String> dbBox;
 	
 	private final Node rootIcon = new ImageView(
 	        new Image(App.class.getResource("picture/rootIcon.png").toString())
+	);
+	
+	private final Node runIcon = new ImageView(
+	        new Image(App.class.getResource("picture/run.png").toString())
+	);
+	
+	private final Node stopIcon = new ImageView(
+	        new Image(App.class.getResource("picture/stop.png").toString())
 	);
 	
 	private Map<String,List<String>> dbMap = new HashMap<>();
 	
 	private Map<String,List<String>> tbMap = new HashMap<>();
 	
-	private ExecutorService pool = Executors.newFixedThreadPool(20);;
+	private ExecutorService pool = Executors.newFixedThreadPool(20);
+	
+	private List<List<String>> data = null;
+	
+	private ObservableList<String> roots = FXCollections.observableArrayList();
+	
+	private ObservableList<String> dbs = FXCollections.observableArrayList();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
+		runButton.setGraphic(runIcon);
+		stopButton.setGraphic(stopIcon);
+		stopButton.setDisable(true);
+		runButton.setDisable(true);
+		
+		inputArea.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				// TODO Auto-generated method stub
+				if(newValue==null||newValue.length()==0) {
+					runButton.setDisable(true);
+				}else runButton.setDisable(false);
+			}
+		});
+		
+		runButton.setOnAction(e->{
+			String selectedText = inputArea.getSelectedText();
+			if(selectedText==null||selectedText.length()==0) {
+				String text = inputArea.getText();
+				String[] sqls = text.split(";");
+				pool.submit(new QueryRequest(sqls, 
+						AppContext.instance().getConnection(conBox.getSelectionModel().getSelectedItem())));
+			}
+		});
+		
 		try {
 			addTreeViewRoot();
 			pool.submit(new RefreshTask());
@@ -58,10 +118,13 @@ public class SecondaryController  implements Initializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
     public void addTreeViewRoot() throws SQLException {
-    	List<String> roots = AppContext.instance().getConnsName();
+    	roots.addAll(AppContext.instance().getConnsName());
+    	conBox.setItems(roots);
+    	conBox.setValue(roots.get(0));
     	for(String root:roots) {
     		TreeItem<String> rootItem = new TreeItem<> (root, rootIcon);
         	TreeView<String> tree = new TreeView<> (rootItem); 
@@ -72,7 +135,7 @@ public class SecondaryController  implements Initializable{
     public void addRestultSet(List<List<String>> content) {
     	GridPane pane= new GridPane();
     	pane.getStylesheets().add(App.class.getResource("copyLabel.css").toString());
-    	pane.autosize();
+    	pane.setGridLinesVisible(true);
     	int row = content.size();
     	int col = content.get(0).size();
     	for(int i=0;i<row;i++) {
@@ -80,9 +143,10 @@ public class SecondaryController  implements Initializable{
     		for(int j=0;j<col;j++) {
     			TextField field = new TextField(row_i.get(j));
             	field.setEditable(false);
-                pane.add(field,i,j);
+                pane.add(field,j,i);
     		}
     	}
+    	resultSet.setContent(pane);
     }
     
     public void refreshTreeView() throws SQLException {
@@ -153,19 +217,48 @@ public class SecondaryController  implements Initializable{
     
     class QueryRequest extends Task<String>{
 
-    	private String sql;
+    	private String[] sqls;
     	
-    	public QueryRequest(String sqls) {
+    	private Connection con;
+    	
+    	public QueryRequest(String[] sqls,Connection con) {
 			// TODO Auto-generated constructor stub
-    		this.sql = sql;
+    		this.sqls = sqls;
+    		this.con = con;
 		}
     	
 		@Override
 		protected String call() throws Exception {
 			// TODO Auto-generated method stub
-			
+			data = null;
+			for(String sql:sqls) {
+				if(sql.contains("select")||sql.contains("SELECT")) {
+					data = LoadSqlService.loadTables(QueryService.executeQuery(sql, con));
+				}else {
+					QueryService.execute(sql, con);
+				}
+			}
+			if(data!=null)
+				pool.submit(new AddResultSetTask());
 			return null;
 		}
     	
     }
+    
+    class AddResultSetTask extends Task<String>{
+    	
+		@Override
+		protected String call() throws Exception {
+			// TODO Auto-generated method stub
+			Platform.runLater(new Runnable() {
+	            @Override public void run() {
+	            	addRestultSet(data);
+	            }
+			});
+			return null;
+		}
+    	
+    }
+    
+    
 }

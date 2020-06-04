@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
+<?import com.jfoenix.controls.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -22,8 +24,25 @@
               <items>
                   <VBox>
                      <children>
-                        <HBox fillHeight="false" minHeight="40.0" prefHeight="40.0" style="-fx-border-color: black; -fx-border-width: 1;" />
-                        <TextArea prefHeight="800.0" />
+                        <HBox alignment="CENTER_LEFT" fillHeight="false" minHeight="40.0" prefHeight="40.0" spacing="20.0">
+                           <children>
+                              <JFXComboBox fx:id="conBox" prefWidth="100.0" />
+                              <JFXComboBox fx:id="dbBox" prefWidth="100.0" />
+                              <JFXButton fx:id="runButton" text="运行">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </JFXButton>
+                              <JFXButton fx:id="stopButton" text="停止">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </JFXButton>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding></HBox>
+                        <TextArea fx:id="inputArea" prefHeight="800.0" />
                      </children>
                   </VBox>
                   <TabPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" tabClosingPolicy="UNAVAILABLE">
@@ -33,7 +52,10 @@
                               <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" />
                            </content>
                       </Tab>
-                      <Tab fx:id="resultSet" text="结果集" />
+                      <Tab text="结果集">
+                           <content>
+                              <ScrollPane fx:id="resultSet" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" />
+                           </content></Tab>
                     </tabs>
                   </TabPane>
               </items>

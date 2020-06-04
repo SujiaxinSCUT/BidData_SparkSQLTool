@@ -46,6 +46,9 @@ public class App extends Application {
     	stage.setWidth(800);
     	stage.setHeight(600);
     	stage.show();
+    	stage.setOnCloseRequest(e->{
+    		System.exit(1);
+    	});
     	return fxmlLoader.getController();
     }
     

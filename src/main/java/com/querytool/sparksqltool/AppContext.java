@@ -19,7 +19,12 @@ public class AppContext {
 	
 	private Map<String,Connection> conns;
 	
-	private AppContext() {conns = new HashMap<>();} 
+	private Map<String,Connection> listConns;
+	
+	private AppContext() {
+		conns = new HashMap<>();
+		listConns = new HashMap<>();
+	} 
 	
 	public static AppContext instance() {
 		return instance;
@@ -38,24 +43,30 @@ public class AppContext {
 		return list;
 	}
 	
+	public Connection getConnection(String connName) {
+		return conns.get(connName);
+	}
+	
 	public String connect(String url,String username,String password) throws SQLException {
 		Connection conn = JdbcUtil.connect(url, username, password);
+		Connection connForList = JdbcUtil.connect(url, username, password);
 		int index_pre = url.indexOf("//");
 		int index_post = url.lastIndexOf(":");
 		String name = url.substring(index_pre+1,index_post);
 		conns.put(name, conn);
+		listConns.put(name, connForList);
 		return name;
 	}
 	
 	public List<String> getDatabases(String connName) throws SQLException{
 		List<String> databases = LoadSqlService.getDatabasesOrTables(
-				QueryService.executeQuery("show databases", conns.get(connName))
+				QueryService.executeQuery("show databases", listConns.get(connName))
 		);
 		return databases;
 	}
 	
 	public List<String> getTables(String connName,String database) throws SQLException{
-		Connection con = conns.get(connName);
+		Connection con = listConns.get(connName);
 		QueryService.selectDatabase(database, con);
 		List<String> tables = LoadSqlService.getDatabasesOrTables(
 				QueryService.executeQuery("show tables", con)
