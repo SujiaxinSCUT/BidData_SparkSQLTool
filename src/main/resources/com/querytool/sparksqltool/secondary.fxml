@@ -11,14 +11,28 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 
-<SplitPane dividerPositions="0.2907268170426065" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.querytool.sparksqltool.controller.SecondaryController">
+<SplitPane fx:id="rootContainer" dividerPositions="0.2907268170426065" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.querytool.sparksqltool.controller.SecondaryController">
   <items>
-      <ScrollPane style="-fx-background-color: white;">
-         <content>
-            <VBox fx:id="viewContainer" prefHeight="800.0" prefWidth="400.0" spacing="10.0" style="-fx-background-color: white;" />
-         </content>
-      </ScrollPane>
-    <AnchorPane minWidth="400.0" style="-fx-background-color: white;">
+      <VBox fx:id="leftContainer" prefHeight="600.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0">
+               <children>
+                  <JFXButton fx:id="addButton" text="新建连接" />
+                  <JFXButton fx:id="refreshButton" text="刷新" />
+                  <JFXSpinner fx:id="listSpinner" prefHeight="20.0" prefWidth="20.0" />
+               </children>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </HBox>
+            <ScrollPane prefHeight="550.0" style="-fx-background-color: white;">
+               <content>
+                  <VBox fx:id="viewContainer" prefHeight="600.0" prefWidth="300.0" spacing="10.0" style="-fx-background-color: white;" />
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+    <AnchorPane fx:id="rightContainer" minWidth="500.0" style="-fx-background-color: white;">
          <children>
             <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="398.0" prefWidth="416.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
@@ -26,8 +40,8 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" fillHeight="false" minHeight="40.0" prefHeight="40.0" spacing="20.0">
                            <children>
-                              <JFXComboBox fx:id="conBox" prefWidth="100.0" />
-                              <JFXComboBox fx:id="dbBox" prefWidth="100.0" />
+                              <JFXComboBox fx:id="conBox" prefWidth="150.0" />
+                              <JFXComboBox fx:id="dbBox" prefWidth="130.0" />
                               <JFXButton fx:id="runButton" text="运行">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
@@ -38,6 +52,7 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </JFXButton>
+                              <JFXSpinner fx:id="querySpinner" prefHeight="20.0" prefWidth="20.0" />
                            </children>
                            <padding>
                               <Insets left="20.0" />
@@ -49,7 +64,7 @@
                     <tabs>
                       <Tab text="日志">
                            <content>
-                              <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" />
+                              <TextArea fx:id="logger" editable="false" prefHeight="200.0" prefWidth="200.0" />
                            </content>
                       </Tab>
                       <Tab text="结果集">

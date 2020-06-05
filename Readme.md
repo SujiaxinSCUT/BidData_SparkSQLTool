@@ -18,6 +18,32 @@
 
 # 6月4日 星期四
 
-解决JDBC多线程共享数据库连接导致的线程安全问题
+解决JDBC多线程共享数据库连接导致的线程安全问题。
 
-基本实现在文本区域输入sql语句后点击运行，成功将sql命令传送到数据库并将返回结果集展示于表格中
+基本实现在文本区域输入sql语句后点击运行，成功将sql命令传送到数据库并将返回结果集展示于表格中。
+
+# 6月5日 星期五
+
+简单查询分析器基本功能都已完备，能完成从建立连接，到选择数据库，对数据库内表进行CRUD等操作。
+
+UI线程处理无明显BUG。
+
+界面显示尚有一点瑕疵，待改进。
+
+目前元素区只能展示从连接、数据库、表信息，待改进。
+
+以下是一些基本界面和操作
+
+![image.png](https://upload-images.jianshu.io/upload_images/17501422-27e0c2ffa976bbbd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/17501422-1f5a8f2efadcd353.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/17501422-4f6f9a52af1abce3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/17501422-e9a610dc5b824a26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/17501422-ee026055dd6c2d62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/17501422-2b7f41be748e8f1e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/17501422-4e925d96b1c7123b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)

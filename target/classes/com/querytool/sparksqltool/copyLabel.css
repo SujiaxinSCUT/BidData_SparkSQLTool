@@ -1,12 +1,9 @@
-.label{
-	-fx-border-color: red;
-     -fx-border-width: 0, 0,0,0;
-     -fx-border-radius: 0, 0;
-     -fx-border-insets: 0, 1,0,0;
-
-}
 .copyablelabel{
     -fx-background-color: white;
 	-fx-border-width:1;
 	-fx-border-color:black;
+}
+
+.button{
+	-fx-background-color: #58ACFA;
 }

@@ -147,7 +147,8 @@ class ConnectionTask extends Task<List<String>>{
 	        		try {
 	        			AppContext.instance().connect(url, username, password);
 	        			AppContext.instance().getApp().close();
-	        			AppContext.instance().getApp().mainStage();
+	        			if(!App.isMainRunning)
+	        				AppContext.instance().getApp().mainStage();
 	        		} catch (Exception e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();

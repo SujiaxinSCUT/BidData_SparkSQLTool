@@ -18,6 +18,8 @@ public class App extends Application {
     private static Scene scene;
     
     private static Stage stage;
+    
+    public static boolean isMainRunning = false;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -25,7 +27,7 @@ public class App extends Application {
         loginStage();
     }
     
-    public void loginStage() throws IOException {
+    public Stage loginStage() throws IOException {
     	Stage stage = new Stage();
     	this.stage =stage;
     	stage.setResizable(false);
@@ -34,6 +36,7 @@ public class App extends Application {
     	stage.setHeight(400);
     	stage.setScene(scene);
     	stage.show();
+    	return stage;
     }
     
     public SecondaryController mainStage() throws IOException {
@@ -45,6 +48,7 @@ public class App extends Application {
     	stage.setScene(scene);
     	stage.setWidth(800);
     	stage.setHeight(600);
+    	isMainRunning = true;
     	stage.show();
     	stage.setOnCloseRequest(e->{
     		System.exit(1);
