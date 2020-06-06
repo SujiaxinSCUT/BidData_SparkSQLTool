@@ -25,11 +25,7 @@
                   <Insets left="5.0" />
                </padding>
             </HBox>
-            <ScrollPane prefHeight="550.0" style="-fx-background-color: white;">
-               <content>
-                  <VBox fx:id="viewContainer" prefHeight="600.0" prefWidth="300.0" spacing="10.0" style="-fx-background-color: white;" />
-               </content>
-            </ScrollPane>
+            <VBox fx:id="viewContainer" prefHeight="550.0" prefWidth="300.0" spacing="10.0" style="-fx-background-color: white;" />
          </children>
       </VBox>
     <AnchorPane fx:id="rightContainer" minWidth="500.0" style="-fx-background-color: white;">

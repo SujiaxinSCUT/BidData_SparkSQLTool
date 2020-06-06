@@ -17,7 +17,9 @@ public class App extends Application {
 
     private static Scene scene;
     
-    private static Stage stage;
+    public static Stage loginStage;
+    
+    public static Stage mainStage;
     
     public static boolean isMainRunning = false;
 
@@ -29,7 +31,7 @@ public class App extends Application {
     
     public Stage loginStage() throws IOException {
     	Stage stage = new Stage();
-    	this.stage =stage;
+    	loginStage =stage;
     	stage.setResizable(false);
     	Scene scene = new Scene(loadFXML("primary"));
     	stage.setWidth(360);
@@ -41,7 +43,7 @@ public class App extends Application {
     
     public SecondaryController mainStage() throws IOException {
     	Stage stage = new Stage();
-    	this.stage =stage;
+    	mainStage =stage;
     	stage.setResizable(false);
     	FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("secondary.fxml"));
     	Scene scene = new Scene(fxmlLoader.load());
@@ -54,10 +56,6 @@ public class App extends Application {
     		System.exit(1);
     	});
     	return fxmlLoader.getController();
-    }
-    
-    public void close() {
-    	stage.close();
     }
 
     static void setRoot(String fxml) throws IOException {

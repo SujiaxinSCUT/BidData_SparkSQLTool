@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSpinner;
@@ -50,6 +51,7 @@ public class SecondaryController  implements Initializable{
 	
 	@FXML
 	private SplitPane rootContainer;
+	
 	@FXML
 	private VBox viewContainer;
 	
@@ -112,19 +114,13 @@ public class SecondaryController  implements Initializable{
 	        new Image(App.class.getResource("picture/refresh.png").toString())
 	);
 	
-	private final Node dbIcon = new ImageView(
-	        new Image(App.class.getResource("picture/db.png").toString())
-	);
-	
-	private final Node tbIcon = new ImageView(
-	        new Image(App.class.getResource("picture/tb.png").toString())
-	);
-	
 	private Map<String,List<String>> dbMap = new HashMap<>();
 	
 	private Map<String,List<String>> tbMap = new HashMap<>();
 	
-	private ExecutorService pool = Executors.newFixedThreadPool(20);
+	private ExecutorService listPool = Executors.newSingleThreadExecutor();
+	
+	private ExecutorService queryPool = Executors.newSingleThreadExecutor();
 	
 	private List<List<String>> data = null;
 	
@@ -138,9 +134,9 @@ public class SecondaryController  implements Initializable{
 	
 	private BooleanProperty isQueryRunning = new SimpleBooleanProperty();
 	
-	private static final int partSize = 100;
-	
 	private int curPageCount = 0;
+	
+	private Thread curThread;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -181,11 +177,19 @@ public class SecondaryController  implements Initializable{
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				// TODO Auto-generated method stub
 				if(newValue) {
-					rightContainer.setDisable(true);
+					conBox.setDisable(true);
+					dbBox.setDisable(true);
+					runButton.setDisable(true);
+					inputArea.setDisable(true);
 					querySpinner.setVisible(true);
+					stopButton.setDisable(false);
 				}else {
-					rightContainer.setDisable(false);
+					conBox.setDisable(false);
+					dbBox.setDisable(false);
+					runButton.setDisable(false);
+					inputArea.setDisable(false);
 					querySpinner.setVisible(false);
+					stopButton.setDisable(true);
 				}
 			}
 		});
@@ -205,9 +209,21 @@ public class SecondaryController  implements Initializable{
 			if(selectedText==null||selectedText.length()==0) {
 				String text = inputArea.getText();
 				String[] sqls = text.split(";");
-				pool.submit(new QueryRequest(sqls, 
+				curThread = new Thread(new QueryRequest(sqls, 
 						AppContext.instance().getConnection(conBox.getSelectionModel().getSelectedItem())));
+				curThread.start();
+			}else {
+				String[] sqls = selectedText.split(";");
+				curThread = new Thread(new QueryRequest(sqls, 
+						AppContext.instance().getConnection(conBox.getSelectionModel().getSelectedItem())));
+				curThread.start();
 			}
+		});
+		
+		stopButton.setOnAction(e->{
+			isQueryRunning.set(false);
+			curThread.interrupt();
+			log("all query shut down");
 		});
 		
 		conBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -216,6 +232,8 @@ public class SecondaryController  implements Initializable{
 				// TODO Auto-generated method stub
 				dbs.clear();
 				dbs.addAll(dbMap.get(newValue));
+				if(inputArea.isDisable())
+					inputArea.setDisable(false);
 			}
 		});
 		
@@ -224,7 +242,7 @@ public class SecondaryController  implements Initializable{
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				// TODO Auto-generated method stub
-				pool.submit(new QueryRequest(new String[] {"use "+newValue}, 
+				queryPool.submit(new QueryRequest(new String[] {"use "+newValue}, 
 						AppContext.instance().getConnection(conBox.getSelectionModel().getSelectedItem())));
 			}
 		});
@@ -244,7 +262,7 @@ public class SecondaryController  implements Initializable{
 		    	roots.clear();
 		    	viewContainer.getChildren().clear();
 				addTreeViewRoot();
-				pool.submit(new RefreshTask());
+				listPool.submit(new RefreshTask());
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -255,7 +273,6 @@ public class SecondaryController  implements Initializable{
 			try {
 				Stage stage = AppContext.instance().getApp().loginStage();
 				stage.setOnCloseRequest(e2->{
-					if(AppContext.instance().getConnsName().size()>roots.size()) {
 				    	roots.clear();
 				    	viewContainer.getChildren().clear();
 						try {
@@ -264,8 +281,7 @@ public class SecondaryController  implements Initializable{
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						pool.submit(new RefreshTask());
-					}
+						listPool.submit(new RefreshTask());					
 				});
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -277,7 +293,7 @@ public class SecondaryController  implements Initializable{
 		
 		try {
 			addTreeViewRoot();
-			pool.submit(new RefreshTask());
+			listPool.submit(new RefreshTask());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -299,8 +315,12 @@ public class SecondaryController  implements Initializable{
     	GridPane pane= new GridPane();
     	pane.getStylesheets().add(App.class.getResource("copyLabel.css").toString());
     	pane.setGridLinesVisible(true);
+    	int partSize;
     	int row = content.size();
     	int col = content.get(0).size();
+    	if(col<10)
+    		partSize = 50;
+    	else partSize = 20;
     	int totalPageCount = row/partSize;
     	for(int i=curPageCount*partSize;i<row&&i<(curPageCount+1)*partSize;i++) {
     		List<String> row_i = content.get(i);
@@ -310,6 +330,16 @@ public class SecondaryController  implements Initializable{
                 pane.add(field,j,i);
     		}
     	}
+    	
+    	if(curPageCount!=0) {
+    		List<String> colNames = content.get(0);
+    		for(int i=0;i<col;i++) {
+    			TextField field = new TextField(colNames.get(i));
+            	field.setEditable(false);
+                pane.add(field,i,0);
+    		}
+    	}
+    	
     	JFXButton lastPageButton = new JFXButton("上一页");
     	JFXButton nextPageButton = new JFXButton("下一页");
     	
@@ -333,7 +363,7 @@ public class SecondaryController  implements Initializable{
     	
     	if(col>1) {
     		pane.add(lastPageButton, 0, pane.getRowCount());
-    		pane.add(nextPageButton, pane.getColumnCount()-1, pane.getRowCount()-1);
+    		pane.add(nextPageButton, 1, pane.getRowCount()-1);
     	}else {
     		pane.add(lastPageButton, 0, pane.getRowCount());
     		pane.add(nextPageButton, 0, pane.getRowCount());
@@ -374,7 +404,7 @@ public class SecondaryController  implements Initializable{
 			try {
 				isListRunning.set(true);
 				refreshTreeView();
-				pool.submit(new AddViewTask());
+				listPool.submit(new AddViewTask());
 			} catch (SQLException e) {
 			// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -399,6 +429,7 @@ public class SecondaryController  implements Initializable{
 			    		@SuppressWarnings("unchecked")
 						TreeView<String> tree_tmp = (TreeView<String>)tree; 
 			    		TreeItem<String> root = tree_tmp.getRoot();
+			    		conBox.getSelectionModel().select(root.getValue());
 			    		List<String> databases = dbMap.get(root.getValue());
 			    		for(String database:databases) {
 			    			TreeItem<String> dbItem = new TreeItem<>(database);
@@ -454,7 +485,7 @@ public class SecondaryController  implements Initializable{
 				isQueryRunning.set(false);
 			}
 			if(data!=null)
-				pool.submit(new AddResultSetTask());
+				listPool.submit(new AddResultSetTask());
 			return null;
 		}
     	

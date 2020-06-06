@@ -47,3 +47,12 @@ UI线程处理无明显BUG。
 ![image.png](https://upload-images.jianshu.io/upload_images/17501422-2b7f41be748e8f1e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![image.png](https://upload-images.jianshu.io/upload_images/17501422-4e925d96b1c7123b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+# 6月6日 星期六
+
+一些界面问题得以解决
+
+确定查询线程使用及其停止方法
+
+目前正在编写使用说明书以及设计说明书
+

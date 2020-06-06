@@ -73,4 +73,13 @@ public class AppContext {
 		);
 		return tables;
 	}
+	
+	public List<String> getViews(String connName,String database) throws SQLException{
+		Connection con = listConns.get(connName);
+		QueryService.selectDatabase(database, con);
+		List<String> tables = LoadSqlService.getDatabasesOrTables(
+				QueryService.executeQuery("show views", con)
+		);
+		return tables;
+	}
 }
